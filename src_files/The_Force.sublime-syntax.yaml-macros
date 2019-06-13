@@ -1,0 +1,6 @@
+%YAML 1.2
+%TAG ! tag:yaml-macros:YAMLMacros.lib.extend,YAMLMacros.lib.include:
+---
+!apply
+- !include GLSL.sublime-syntax
+- !include GLSLextension.sublime-syntax.yaml-macros

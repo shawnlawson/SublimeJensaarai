@@ -1,0 +1,19 @@
+%YAML 1.2
+%TAG ! tag:yaml-macros:YAMLMacros.lib.extend:
+---
+!merge
+name: TheForce
+
+contexts: !merge
+
+  builtin-Force-functions:
+    - match: \b(rand|box|circle|rotate|noise|voronoi|fbm|rmf|vfbm|vrmf|kale|st|stN|TDRGBToHSV|TDHSVToRGB|TDPerlinNoise|TDSimplexNoise)\b
+      scope: support.function.source.glsl
+
+  builtin-Force-vars:
+    - match: \b(black|white|red|orange|yellow|green|blue|purple|pink|lime|teal|magenta|brown|PI|PI2|theta|phi)\b
+      scope: support.constant.source.glsl
+
+  builtin-Force-uniforms:
+    - match: \b(resolution|time|bands|lag|speed|sTD2DInputs[0])\b
+      scope: support.other.source.glsl

@@ -1,0 +1,43 @@
+/*
+    Jensaarai default settings
+*/
+{
+    /*
+        OSC server for all incoming messages
+        /python_feedback
+        /glsl_feedback
+
+        add more callbacks in OSC.py file
+    */
+    "osc_server_enable": true,
+    "osc_server_port": 8888,
+
+    /*
+        OSC client for all outgoing messages
+        to touch designer
+    */
+    "osc_touch_designer_enable": true,
+    "osc_touch_designer_ip": "127.0.0.1",
+    "osc_touch_designer_port": 7777,
+
+    /*
+        Run local Tidal in Terminus
+    */
+    "terminus_tidal": false,
+    "shell": "zsh",
+    "stack": "",
+    "ghci_location": "/Users/lawsos2/.ghcup/bin/ghci",
+
+    /*
+        Websocket connection webviewer in
+        touch designer for code overlay
+    */
+    "websocket": true,
+    "websocket_ip": "127.0.0.1",
+    "websocket_port": 5678,
+
+    /*
+        Toggle for local recording
+    */
+    "enable_recording": true
+}

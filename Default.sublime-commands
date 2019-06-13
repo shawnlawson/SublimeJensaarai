@@ -1,0 +1,62 @@
+[
+    {
+        "caption": "Jensaarai: Start Jensaarai",
+        "command": "start_jensaarai",
+    },
+    {
+        "caption": "Jensaarai: Stop Jensaarai",
+        "command": "stop_jensaarai"
+    },
+    {
+        "caption": "Jensaarai: Send Language",
+        "command": "send_jensaarai_language"
+    },
+    {
+        "caption": "Jensaarai: Start Websocket",
+        "command": "start_jensaarai_websocket"
+    },
+    {
+        "caption": "Jensaarai: Stop Websocket",
+        "command": "stop_jensaarai_websocket"
+    },
+    {
+        "caption": "Jensaarai: Start OSC Server",
+        "command": "start_jensaarai_osc_server"
+    },
+    {
+        "caption": "Jensaarai: Stop OSC Server",
+        "command": "stop_jensaarai_osc_server"
+    },
+    {
+        "caption": "Jensaarai: Start OSC Client",
+        "command": "start_jensaarai_osc_client"
+    },
+    {
+        "caption": "Jensaarai: Stop OSC Client",
+        "command": "stop_jensaarai_osc_client"
+    },
+    {
+        "caption": "Jensaarai: Start Tidal",
+        "command": "start_jensaarai_tidal"
+    },
+    {
+        "caption": "Jensaarai: Stop Tidal",
+        "command": "stop_jensaarai_tidal"
+    },
+    {
+        "caption": "Jensaarai: Start Recording",
+        "command": "start_jensaarai_recording"
+    },
+    {
+        "caption": "Jensaarai: Stop Recording",
+        "command": "stop_jensaarai_recording"
+    },
+    {
+        "caption": "Jensaarai: Save Recording",
+        "command": "save_jensaarai_recording"
+    },
+    {
+        "caption": "Jensaarai: Open Recording",
+        "command": "open_jensaarai_recording"
+    },
+]
