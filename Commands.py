@@ -102,11 +102,12 @@ class SaveJensaaraiRecordingCommand(sublime_plugin.TextCommand):
                 jensaarai.recording.save()
 
 
-class OpenJensaaraiRecordingCommand(sublime_plugin.TextCommand):
+class CreateJensaaraiPlaybackCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         global jensaarai
         if jensaarai is not None:
-            jensaarai.view.window().run_command("prompt_open")
+            jensaarai.create_playback()
+        # else kick open jensaarai? and do this?
 
 
 # Handle shift/cmd+enter commands
@@ -134,9 +135,35 @@ class SendJensaaraiLanguageCommand(sublime_plugin.TextCommand):
         jensaarai.make_language_msg(input)
 
 
+# Insert/Remove/Replace into jensaarai main view
+class InsertJensaaraiMainCommand(sublime_plugin.TextCommand):
+    def run(self, edit, text, point):
+        global jensaarai
+        if jensaarai is not None:
+            jensaarai.view.insert(edit, point, text)
+
+
+class RemoveJensaaraiMainCommand(sublime_plugin.TextCommand):
+    def run(self, edit, region):
+        global jensaarai
+        if jensaarai is not None:
+            jensaarai.view.erase(edit, region)
+
+
+class ReplaceJensaaraiMainCommand(sublime_plugin.TextCommand):
+    def run(self, edit, text, region):
+        global jensaarai
+        if jensaarai is not None:
+            jensaarai.view.replace(
+                edit,
+                sublime.Region(0, jensaarai.view.size()),
+                text)
+
+
 # Dump OSC server messages to console
 class InsertJensaaraiConsoleCommand(sublime_plugin.TextCommand):
     def run(self, edit, text):
+        global jensaarai
         if jensaarai is not None and jensaarai.osc_server is not None:
             console = jensaarai.osc_server.console
             console.insert(edit, console.size(), text)

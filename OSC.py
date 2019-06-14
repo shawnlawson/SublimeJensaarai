@@ -1,5 +1,6 @@
 import threading
-from pythonosc import dispatcher, osc_server, osc_message_builder, udp_client
+from pythonosc import dispatcher, osc_server
+from pythonosc import osc_message_builder, udp_client
 
 
 class OSCServer(threading.Thread):

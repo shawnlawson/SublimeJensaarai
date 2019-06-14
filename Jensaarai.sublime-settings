@@ -9,14 +9,14 @@
 
         add more callbacks in OSC.py file
     */
-    "osc_server_enable": true,
+    "osc_server_enable": false,
     "osc_server_port": 8888,
 
     /*
         OSC client for all outgoing messages
         to touch designer
     */
-    "osc_touch_designer_enable": true,
+    "osc_touch_designer_enable": false,
     "osc_touch_designer_ip": "127.0.0.1",
     "osc_touch_designer_port": 7777,
 
@@ -32,7 +32,7 @@
         Websocket connection webviewer in
         touch designer for code overlay
     */
-    "websocket": true,
+    "websocket": false,
     "websocket_ip": "127.0.0.1",
     "websocket_port": 5678,
 

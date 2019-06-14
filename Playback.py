@@ -1,78 +1,98 @@
 import json
-# from tkinter import *
-import time
 import threading
+import time
+import sublime
 
 
 class Playback(threading.Thread):
 
-    def __init__(self, owner):
+    def __init__(self, owner, view):
         super(Playback, self).__init__()
-        self.events = []
         self.owner = owner
+        self.view = view
+        self.data = None
         self.which_event = 0
-        self.file = None
-
-        # set recordings to none
+        self.total_events = 0
+        self.total_time = 0
+        self.play_start = 0.0
+        self.timer = None
         # disable any auto stuff?
-        # self.open()
+        self.open()
 
     def run(self):
         pass
 
-    def save(self):
-        window = self.owner.view.window()
-        self.file = window.new_file()
-        window.set_view_index(self.file, 0, 0)
-        window.focus_view(self.file)
-        self.file.run_command(
-            "insert_jensaarai_recording",
-            {"text": json.dumps({
-                "version": 5,
-                "playback": 1,
-                "editor_type": "sublime",
-                "initial_text": self.start_text,
-                "action": self.recording,
-                "local_end_time": time.time(),
-                "local_start_time": self.owner.start_time,
-                "final_text": self.owner.get_buffer()
-            },
-                indent=True
-            )
-            }
-        )
-        window.run_command('prompt_save_as')
-
     def open(self):
-        #some sublime UI to choose file
-        #parse file into self.events
-        #set initial text
+        # strData = self.view.substr(sublime.Region(0, self.view.size()))
+        self.data = json.loads(
+            self.view.substr(sublime.Region(0, self.view.size())))
+        self.owner.view.window().run_command(
+            "replace_jensaarai_main",
+            {"text": self.data["initialtext"], "region": None})
+        self.total_time = (self.data["local_end_time"] -
+                           self.data["local_start_time"])
+        self.total_events = len(self.data['action'])
 
-      #   it.lw_version = json_file['version']
-      # it.lw_playback = (json_file['playback'] ? json_file['playback'] : 1)
-      # it.lw_type = json_file['editor_type']
-      # it.lw_finaltext = (json_file['finaltext'] ? json_file['finaltext'] : '')
-      # it.lw_initialText = (json_file['initialtext'] ? json_file['initialtext'] : '')
-      # it.setValue(it.lw_initialText)
-      # it.lw_data_index = 0
-      # it.lw_data = json_file['action']
-      # it.lw_endTime = it.lw_data[it.lw_data.length - 1].t
-      #build tk UI
-      # w2 = Scale(master, from_=0, to=200,tickinterval=10, orient=HORIZONTAL)
-      #   w2.set(23)
-      # Button(master, text='Show', command=show_values).pack()
+    def do_event(self, ignore):
+        event = self.data['action'][self.which_event]
 
-        pass
+        if event['type'] is 'u':
+            # multiple cursors?
+            pass
+        elif event['type'] is 'c' and event['action'] is 'insert':
+            self.owner.view.window().run_command(
+                "insert_jensaarai_main",
+                {
+                    "text": event["text"],
+                    "region": sublime.Region(
+                        event['change']['start'],
+                        event['change']['end'])
+                })
+        elif event['type'] is 'c' and event['action'] is 'remove':
+            self.owner.view.window().run_command(
+                "replace_jensaarai_main",
+                {"region": sublime.Region(
+                    event['change']['start'],
+                    event['change']['end'])})
+        elif event['type'] is 'e':
+            pass
+        elif event['type'] is 'o':
+            pass
 
-    def handleEvent(self):
-        #see scheduleNextEventFunc and triggerPlayAceFunc
-        pass
+        if not ignore:
+            self.handle_event()
+
+    def handle_event(self):
+        event = self.data['action'][self.which_event]
+
+        # behind on events
+        while (self.which_event + 1 < self.total_events and
+                self.play_start - time.time() + event['time'] < 0):
+            self.do_event(True)
+            self.which_event += 1
+            event = self.data['action'][self.which_event]
+
+        # out of events
+        if self.which_event + 1 >= self.total_events:
+            self.stop()
+        # or some remaining
+        else:
+            when = self.play_start - time.time() + event['time']
+            self.timer = threading.Timer(when, self.do_event, [False])
+            self.timer.start()
 
     def play(self):
-        pass
+        self.play_start = time.time()
+        self.handle_event()
 
-    def pause(self):
-        pass
+    def stop(self):
+        if self.timer.isActive():
+            self.timer.cancel()
 
     def rewind(self):
-        pass
+        self.stop()
+        self.which_event = 0
+        self.play_start = 0.0
+        self.owner.view.window().run_command(
+            "replace_jensaarai_main",
+            {"text": self.data["initialtext"], "region": None})

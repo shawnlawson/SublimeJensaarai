@@ -5,6 +5,7 @@ import copy
 import json
 import time
 from . import Recording
+from . import Playback
 from . import OSC
 from . import WS
 from . import Tidal
@@ -25,6 +26,7 @@ class Jensaarai(threading.Thread):
         self.osc_client = None
         self.tidal = None
         self.recording = None
+        self.playback = None
         if self.settings.get("enable_recording"):
             self.start_recording()
         if self.settings.get("osc_touch_designer_enable"):
@@ -123,6 +125,7 @@ class Jensaarai(threading.Thread):
                 'start': cursor.a,
                 'end': cursor.b
             },
+            "text": text,
             'reverse': 'false' if cursor.a <= cursor.b else 'true',
             'lang': who
         }
@@ -274,8 +277,21 @@ class Jensaarai(threading.Thread):
             self.recording.erase()
             self.recording = None
 
+    def create_playback(self):
+        self.destroy_playback()
+        if self.playback is None:
+            self.stop_recording()
+            self.playback = Playback.Playback(
+                self,
+                self.view.window().active_view())
+
+    def destroy_playback(self):
+        if self.playback is not None:
+            self.playback.destroy()
+
     def close(self):
         self.stop_recording()
+        self.destroy_playback()
         self.stop_osc_client()
         self.stop_osc_server()
         self.stop_ws()

@@ -56,7 +56,7 @@
         "command": "save_jensaarai_recording"
     },
     {
-        "caption": "Jensaarai: Open Recording",
-        "command": "open_jensaarai_recording"
+        "caption": "Jensaarai: Create Playback",
+        "command": "create_jensaarai_playback"
     },
 ]
