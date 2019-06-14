@@ -144,6 +144,7 @@ class InsertJensaaraiConsoleCommand(sublime_plugin.TextCommand):
             console.sel().add(
                 sublime.Region(console.size(), console.size()))
             console.show(console.sel())
+            jensaarai.set_error_highlights(text)
 
 
 # Dump recording into a file

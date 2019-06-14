@@ -19,6 +19,7 @@ class Jensaarai(threading.Thread):
         self.start_time = time.time()
         self.settings = sublime.load_settings("Jensaarai.sublime-settings")
         self.glslTimer = threading.Timer(.250, self.auto_glsl)
+        self.glslTag = None
         self.ws_server = None
         self.osc_server = None
         self.osc_client = None
@@ -38,32 +39,6 @@ class Jensaarai(threading.Thread):
 
     def run(self):
         pass
-
-    def auto_glsl(self):
-        lines = self.get_buffer().splitlines(True)
-        for cursor in self.view.sel():
-            loc = self.view.rowcol(cursor.begin())
-            start = end = loc[0]
-            length = len(lines)
-            if start == length:
-                start -= 1
-                end -= 1
-            who, where = self.get_language(lines, start)
-
-        if who == 'glsl':
-            while end + 1 <= length:
-                if ('//glsl' in lines[end] or
-                        '//python' in lines[end] or
-                        '//tidal' in lines[end]):
-                    break
-                else:
-                    end += 1
-
-            self.manage_messages(
-                '',
-                self.view.sel()[0],
-                who=who,
-                text=''.join(lines[where + 1: end]))
 
     def make_init_msg(self):
         # special case
@@ -161,6 +136,49 @@ class Jensaarai(threading.Thread):
         if self.tidal is not None and who is 'tidal':
             self.tidal.send(text)
         # if firebase
+
+    def auto_glsl(self):
+        lines = self.get_buffer().splitlines(True)
+        for cursor in self.view.sel():
+            loc = self.view.rowcol(cursor.begin())
+            start = end = loc[0]
+            length = len(lines)
+            if start == length:
+                start -= 1
+                end -= 1
+            who, self.glslTag = self.get_language(lines, start)
+
+        if who == 'glsl':
+            while end + 1 <= length:
+                if ('//glsl' in lines[end] or
+                        '//python' in lines[end] or
+                        '//tidal' in lines[end]):
+                    break
+                else:
+                    end += 1
+
+            self.manage_messages(
+                '',
+                self.view.sel()[0],
+                who=who,
+                text=''.join(lines[self.glslTag + 1: end]))
+
+    def set_error_highlights(self, errors):
+        self.view.erase_regions("glslError")
+        errorLines = errors.splitlines()
+        for err in errorLines:
+            parts = err.split(':')
+            pLen = len(parts)
+            if pLen is 4 or pLen is 6:
+                p = self.view.text_point(int(parts[2]) + self.glslTag - 50, 0)
+                self.view.add_regions(
+                    'glslError',
+                    [self.view.full_line(p)],
+                    'selection',
+                    '',
+                    sublime.DRAW_STIPPLED_UNDERLINE |
+                    sublime.DRAW_NO_OUTLINE | sublime.DRAW_NO_FILL
+                )
 
     def patch_view(self, edit, patch):
         pass

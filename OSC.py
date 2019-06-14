@@ -12,7 +12,6 @@ class OSCServer(threading.Thread):
         self.console = self.owner.view.window().new_file()
         self.console.window().run_command(
             "carry_file_to_pane", {"direction": "down"})
-        self.owner.view.window().focus_view(self.owner.view)
         self.dispatcher = dispatcher.Dispatcher()
         self.dispatcher.map("/python_feedback", self.pythonCallback)
         self.dispatcher.map("/glsl_feedback", self.glslCallback)
@@ -22,6 +21,9 @@ class OSCServer(threading.Thread):
             (self.ip, self.port),
             self.dispatcher
         )
+        self.owner.view.window().run_command(
+            "travel_to_pane", {"direction": "up"})
+        self.owner.view.window().focus_view(self.owner.view)
         print("Started OSCServer {}".format(self.server.server_address))
         self.server.serve_forever()
 
