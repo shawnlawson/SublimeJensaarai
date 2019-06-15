@@ -277,13 +277,14 @@ class Jensaarai(threading.Thread):
             self.recording.erase()
             self.recording = None
 
-    def create_playback(self):
+    def create_playback(self, filename):
         self.destroy_playback()
         if self.playback is None:
             self.stop_recording()
             self.playback = Playback.Playback(
                 self,
-                self.view.window().active_view())
+                self.view.window().active_view(),
+                filename)
 
     def destroy_playback(self):
         if self.playback is not None:

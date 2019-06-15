@@ -106,8 +106,29 @@ class CreateJensaaraiPlaybackCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         global jensaarai
         if jensaarai is not None:
-            jensaarai.create_playback()
+            jensaarai.create_playback(self.view.file_name())
         # else kick open jensaarai? and do this?
+
+
+class PlayJensaaraiPlaybackCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        global jensaarai
+        if jensaarai is not None and jensaarai.playback is not None:
+            jensaarai.playback.play()
+
+
+class StopJensaaraiPlaybackCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        global jensaarai
+        if jensaarai is not None and jensaarai.playback is not None:
+            jensaarai.playback.stop()
+
+
+class RewindJensaaraiPlaybackCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        global jensaarai
+        if jensaarai is not None and jensaarai.playback is not None:
+            jensaarai.playback.rewind()
 
 
 # Handle shift/cmd+enter commands
@@ -144,10 +165,12 @@ class InsertJensaaraiMainCommand(sublime_plugin.TextCommand):
 
 
 class RemoveJensaaraiMainCommand(sublime_plugin.TextCommand):
-    def run(self, edit, region):
+    def run(self, edit, start, end):
         global jensaarai
         if jensaarai is not None:
-            jensaarai.view.erase(edit, region)
+            jensaarai.view.erase(
+                edit,
+                sublime.Region(start, start + end))
 
 
 class ReplaceJensaaraiMainCommand(sublime_plugin.TextCommand):
@@ -158,6 +181,14 @@ class ReplaceJensaaraiMainCommand(sublime_plugin.TextCommand):
                 edit,
                 sublime.Region(0, jensaarai.view.size()),
                 text)
+
+
+class MoveCursorJensaaraiMainCommand(sublime_plugin.TextCommand):
+    def run(self, edit, start, end):
+        global jensaarai
+        if jensaarai is not None:
+            jensaarai.view.sel().clear()
+            jensaarai.view.sel().add(sublime.Region(start, end))
 
 
 # Dump OSC server messages to console
@@ -188,13 +219,13 @@ class EditListener(sublime_plugin.EventListener):
     def on_modified_async(self, view):
         global jensaarai
         if jensaarai is not None:
-            if jensaarai.view == view:
+            if jensaarai.view == view and jensaarai.playback is None:
                 jensaarai.make_edits_msg()
 
     def on_selection_modified_async(self, view):
         global jensaarai
         if jensaarai is not None:
-            if jensaarai.view == view:
+            if jensaarai.view == view and jensaarai.playback is None:
                 jensaarai.make_cursors_msg()
 
     def on_close(self, view):

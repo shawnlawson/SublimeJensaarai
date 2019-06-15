@@ -56,7 +56,19 @@
         "command": "save_jensaarai_recording"
     },
     {
-        "caption": "Jensaarai: Create Playback",
+        "caption": "Jensaarai: Open Recording",
         "command": "create_jensaarai_playback"
+    },
+    {
+        "caption": "Jensaarai: Play Recording",
+        "command": "play_jensaarai_playback"
+    },
+    {
+        "caption": "Jensaarai: Stop Playback",
+        "command": "stop_jensaarai_playback"
+    },
+    {
+        "caption": "Jensaarai: Rewind Recording",
+        "command": "rewind_jensaarai_playback"
     },
 ]

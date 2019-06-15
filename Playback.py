@@ -4,17 +4,18 @@ import time
 import sublime
 
 
-class Playback(threading.Thread):
+class Playback(object):
 
-    def __init__(self, owner, view):
-        super(Playback, self).__init__()
+    def __init__(self, owner, view, filename):
         self.owner = owner
         self.view = view
+        self.filename = filename
         self.data = None
         self.which_event = 0
         self.total_events = 0
         self.total_time = 0
         self.play_start = 0.0
+        self.prev_time = 0.0
         self.timer = None
         # disable any auto stuff?
         self.open()
@@ -23,42 +24,47 @@ class Playback(threading.Thread):
         pass
 
     def open(self):
-        # strData = self.view.substr(sublime.Region(0, self.view.size()))
-        self.data = json.loads(
-            self.view.substr(sublime.Region(0, self.view.size())))
+        self.data = None
+        with open(self.filename, 'r') as f:
+            self.data = json.load(f)
         self.owner.view.window().run_command(
             "replace_jensaarai_main",
-            {"text": self.data["initialtext"], "region": None})
+            {"text": self.data["initial_text"], "region": None})
+        self.owner.view.sel().clear()
+        self.owner.view.sel().add(sublime.Region(0, 0))
         self.total_time = (self.data["local_end_time"] -
                            self.data["local_start_time"])
         self.total_events = len(self.data['action'])
+        self.owner.view.window().focus_view(self.owner.view)
 
     def do_event(self, ignore):
         event = self.data['action'][self.which_event]
 
-        if event['type'] is 'u':
-            # multiple cursors?
-            pass
-        elif event['type'] is 'c' and event['action'] is 'insert':
+        if 'u' in event['type']:
             self.owner.view.window().run_command(
-                "insert_jensaarai_main",
-                {
-                    "text": event["text"],
-                    "region": sublime.Region(
-                        event['change']['start'],
-                        event['change']['end'])
-                })
-        elif event['type'] is 'c' and event['action'] is 'remove':
-            self.owner.view.window().run_command(
-                "replace_jensaarai_main",
-                {"region": sublime.Region(
-                    event['change']['start'],
-                    event['change']['end'])})
-        elif event['type'] is 'e':
-            pass
-        elif event['type'] is 'o':
+                "move_cursor_jensaarai_main",
+                {"start": event['change']['start'],
+                    "end": event['change']['end']})
+        elif 'c' in event['type']:
+            if 'insert' in event['action']:
+                self.owner.view.window().run_command(
+                    "insert_jensaarai_main",
+                    {"text": event["text"],
+                     "point": event['change']['start']})
+            elif 'remove' in event['action']:
+                self.owner.view.window().run_command(
+                    "remove_jensaarai_main",
+                    {"start": event['change']['start'],
+                        "end": event['change']['end']})
+        elif 'e' in event['type']:
+            cursor = sublime.Region(event['change']['start'],
+                                    event['change']['end'])
+            self.owner.manage_messages('e', cursor=cursor, who=event['lang'])
+            self.owner.start_exec_highlight([cursor])
+        elif 'o' in event['type']:
             pass
 
+        self.which_event += 1
         if not ignore:
             self.handle_event()
 
@@ -67,9 +73,8 @@ class Playback(threading.Thread):
 
         # behind on events
         while (self.which_event + 1 < self.total_events and
-                self.play_start - time.time() + event['time'] < 0):
+                self.play_start - time.time() + event['time'] < 0.0):
             self.do_event(True)
-            self.which_event += 1
             event = self.data['action'][self.which_event]
 
         # out of events
@@ -86,13 +91,17 @@ class Playback(threading.Thread):
         self.handle_event()
 
     def stop(self):
-        if self.timer.isActive():
+        if self.timer is not None and self.timer.isAlive():
             self.timer.cancel()
 
     def rewind(self):
         self.stop()
         self.which_event = 0
         self.play_start = 0.0
+        self.prev_time = 0.0
         self.owner.view.window().run_command(
             "replace_jensaarai_main",
-            {"text": self.data["initialtext"], "region": None})
+            {"text": self.data["initial_text"], "region": None})
+
+    def destroy(self):
+        self.stop()
