@@ -41,28 +41,13 @@ class Playback(object):
         event = self.data['action'][self.which_event]
 
         if 'u' in event['type']:
-            self.owner.view.window().run_command(
-                "move_cursor_jensaarai_main",
-                {"start": event['change']['start'],
-                    "end": event['change']['end']})
+            self.owner.recv_local_cursor(event)
         elif 'c' in event['type']:
-            if 'insert' in event['action']:
-                self.owner.view.window().run_command(
-                    "insert_jensaarai_main",
-                    {"text": event["text"],
-                     "point": event['change']['start']})
-            elif 'remove' in event['action']:
-                self.owner.view.window().run_command(
-                    "remove_jensaarai_main",
-                    {"start": event['change']['start'],
-                        "end": event['change']['end']})
+            self.owner.recv_changes(event)
         elif 'e' in event['type']:
-            cursor = sublime.Region(event['change']['start'],
-                                    event['change']['end'])
-            self.owner.manage_messages('e', cursor=cursor, who=event['lang'])
-            self.owner.start_exec_highlight([cursor])
+            self.owner.recv_executes(event)
         elif 'o' in event['type']:
-            pass
+            self.owner.recv_remote_cursor(event)
 
         self.which_event += 1
         if not ignore:

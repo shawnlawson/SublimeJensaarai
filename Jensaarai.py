@@ -140,6 +140,42 @@ class Jensaarai(threading.Thread):
             self.tidal.send(text)
         # if firebase
 
+    def recv_executes(self, data):
+        cursor = sublime.Region(data['change']['start'],
+                                data['change']['end'])
+        if 'tidal' in data['lang'] and self.tidal is not None:
+            self.start_exec_highlight([cursor])
+            self.tidal.send(data['text'])
+        elif 'python' in data['lang'] and self.osc_client is not None:
+            self.start_exec_highlight([cursor])
+            self.osc_client.send('/python', data['text'])
+        elif 'glsl' in data['lang'] and self.osc_client is not None:
+            self.osc_client.send('/glsl', data['text'])
+
+        if self.ws_server is not None:
+            WS.WSHandler.send_messages(json.dumps(data))
+
+    def recv_changes(self, data):
+        if 'insert' in data['action']:
+            self.view.window().run_command(
+                "insert_jensaarai_main",
+                {"text": data["text"],
+                 "point": data['change']['start']})
+        elif 'remove' in data['action']:
+            self.view.window().run_command(
+                "remove_jensaarai_main",
+                {"start": data['change']['start'],
+                    "end": data['change']['end']})
+
+    def recv_local_cursor(self, data):
+        self.view.window().run_command(
+            "move_cursor_jensaarai_main",
+            {"start": data['change']['start'],
+                "end": data['change']['end']})
+
+    def recv_remote_cursor(self, data):
+        pass
+
     def auto_glsl(self):
         lines = self.get_buffer().splitlines(True)
         for cursor in self.view.sel():

@@ -225,7 +225,7 @@ class EditListener(sublime_plugin.EventListener):
     def on_selection_modified_async(self, view):
         global jensaarai
         if jensaarai is not None:
-            if jensaarai.view == view and jensaarai.playback is None:
+            if jensaarai.view == view:
                 jensaarai.make_cursors_msg()
 
     def on_close(self, view):
