@@ -71,4 +71,8 @@
         "caption": "Jensaarai: Rewind Recording",
         "command": "rewind_jensaarai_playback"
     },
+    {
+        "caption": "Jensaarai: Jump To Time of Recording ",
+        "command": "jump_to_jensaarai_playback"
+    },
 ]

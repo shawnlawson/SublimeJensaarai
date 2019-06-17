@@ -166,12 +166,16 @@ class Jensaarai(threading.Thread):
                 "remove_jensaarai_main",
                 {"start": data['change']['start'],
                     "end": data['change']['end']})
+        if self.ws_server is not None:
+            WS.WSHandler.send_messages(json.dumps(data))
 
     def recv_local_cursor(self, data):
         self.view.window().run_command(
             "move_cursor_jensaarai_main",
             {"start": data['change']['start'],
                 "end": data['change']['end']})
+        if self.ws_server is not None:
+            WS.WSHandler.send_messages(json.dumps(data))
 
     def recv_remote_cursor(self, data):
         pass
@@ -230,7 +234,8 @@ class Jensaarai(threading.Thread):
             '',                      # gutton icon
             sublime.DRAW_NO_OUTLINE  # outline
         )
-        sublime.set_timeout(lambda: self.view.erase_regions("jensaarai"), 300)
+        sublime.set_timeout_async(
+            lambda: self.view.erase_regions("jensaarai"), 300)
 
     def get_selected_blocks(self):
         parts = []

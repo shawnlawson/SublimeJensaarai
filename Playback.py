@@ -52,20 +52,23 @@ class Playback(object):
             self.handle_event()
 
     def handle_event(self):
-        event = self.data['action'][self.which_event]
+        print(self.which_event, self.total_events)
 
         # behind on events
-        while (self.which_event + 1 < self.total_events and
-                self.play_start - time.time() + event['time'] < 0.0):
-            self.do_event(True)
-            event = self.data['action'][self.which_event]
+        while self.which_event < self.total_events:
+            event_time = self.data['action'][self.which_event]['time']
+            if self.play_start - time.time() + event_time < 0.0:
+                self.do_event(True)
+            else:
+                break
 
         # out of events
-        if self.which_event + 1 >= self.total_events:
+        if self.which_event >= self.total_events:
             self.stop()
-        # or some remaining
+            return
         else:
-            when = self.play_start - time.time() + event['time']
+            event_time = self.data['action'][self.which_event]['time']
+            when = self.play_start - time.time() + event_time
             self.timer = threading.Timer(when, self.do_event, [False])
             self.timer.start()
 
@@ -78,8 +81,6 @@ class Playback(object):
     def stop(self):
         if self.timer is not None and self.timer.isAlive():
             self.timer.cancel()
-        if self.status_timer is not None and self.status_timer.isAlive():
-            self.status_timer.cancel()
 
     def rewind(self):
         self.stop()
@@ -90,11 +91,40 @@ class Playback(object):
             "replace_jensaarai_main",
             {"text": self.data["initial_text"], "region": None})
 
+    def jump_to(self, input):
+        parts = input.split()
+        if len(parts) > 2:
+            print("Too many numbers. Use:# #")
+            return
+
+        time_jump = 0
+        if len(parts) > 1:
+            min = int(parts[0])
+            sec = int(parts[1])
+            time_jump = min * 60 + sec
+        elif len(parts) == 1:
+            time_jump = int(parts[0])
+        else:
+            print("Not time specified")
+            return
+
+        if time_jump < 0 or time_jump > self.total_time:
+            print("Time not valid, either too big or too small")
+            return
+
+        # set time_jump to something
+
     def status_update(self):
         self.owner.view.erase_status('playback')
         play_head = time.time() - self.play_start
-        status = (str(math.floor(play_head / 60)) + ":" +
-                  str(math.floor(play_head % 60)) + "\t")
+        percent_done = play_head / self.total_time
+        status = '['
+        status += ' ' * math.floor(percent_done * 50)
+        status += '|'
+        status += ' ' * math.floor((1.0 - percent_done) * 50)
+        status += ']\t'
+        status += (str(math.floor(play_head / 60)) + ":" +
+                   str(math.floor(play_head % 60)) + "\t")
         status += (str(math.floor(self.total_time / 60)) + ":" +
                    str(math.floor(self.total_time % 60)) + "\t")
         self.owner.view.set_status('playback', status)
@@ -104,3 +134,5 @@ class Playback(object):
     def destroy(self):
         self.owner.view.erase_status('playback')
         self.stop()
+        if self.status_timer is not None and self.status_timer.isAlive():
+            self.status_timer.cancel()

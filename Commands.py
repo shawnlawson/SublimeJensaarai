@@ -131,6 +131,21 @@ class RewindJensaaraiPlaybackCommand(sublime_plugin.TextCommand):
             jensaarai.playback.rewind()
 
 
+class JumpToJensaaraiPlaybackCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        if jensaarai is not None and jensaarai.playback is not None:
+            self.view.window().show_input_panel(
+                'Jump to min sec of recording',
+                '0 0',
+                self.on_done,
+                None,
+                None,
+            )
+
+    def on_done(self, input):
+        jensaarai.playback.jump_to(input)
+
+
 # Handle shift/cmd+enter commands
 class ExecuteJensaaraiCommand(sublime_plugin.TextCommand):
     def run(self, edit, scope="lines"):
@@ -224,7 +239,7 @@ class EditListener(sublime_plugin.EventListener):
 
     def on_selection_modified_async(self, view):
         global jensaarai
-        if jensaarai is not None:
+        if jensaarai is not None and jensaarai.playback is None:
             if jensaarai.view == view:
                 jensaarai.make_cursors_msg()
 
