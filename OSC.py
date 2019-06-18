@@ -1,4 +1,5 @@
 import threading
+import json
 from pythonosc import dispatcher, osc_server
 from pythonosc import osc_message_builder, udp_client
 
@@ -14,8 +15,9 @@ class OSCServer(threading.Thread):
         self.console.window().run_command(
             "carry_file_to_pane", {"direction": "down"})
         self.dispatcher = dispatcher.Dispatcher()
-        self.dispatcher.map("/python_feedback", self.pythonCallback)
-        self.dispatcher.map("/glsl_feedback", self.glslCallback)
+        self.dispatcher.map("/python_feedback", self.python_callback)
+        self.dispatcher.map("/glsl_feedback", self.glsl_callback)
+        self.dispatcher.map("/tidal_rewrite", self.tidal_rewrite_callback)
 
     def run(self):
         self.server = osc_server.ThreadingOSCUDPServer(
@@ -40,17 +42,29 @@ class OSCServer(threading.Thread):
             self.server = None
             print("closed osc server")
 
-    def pythonCallback(self, unused_addr, args):
+    def python_callback(self, unused_addr, args):
         self.owner.view.window().run_command(
             "insert_jensaarai_console",
             {"text": '\n' + args}
         )
 
-    def glslCallback(self, unused_addr, args):
+    def glsl_callback(self, unused_addr, args):
         self.owner.view.window().run_command(
             "insert_jensaarai_console",
             {"text": '\n' + args}
         )
+
+    def tidal_rewrite_callback(self, unused_addr, args):
+        event = args.loads(args)
+
+        if 'u' in event['type']:
+            self.owner.recv_local_cursor(event)
+        elif 'c' in event['type']:
+            self.owner.recv_changes(event)
+        elif 'e' in event['type']:
+            self.owner.recv_executes(event)
+        elif 'o' in event['type']:
+            self.owner.recv_remote_cursor(event)
 
 
 class OSCClient(threading.Thread):
