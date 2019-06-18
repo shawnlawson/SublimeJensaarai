@@ -55,7 +55,7 @@ class OSCServer(threading.Thread):
         )
 
     def tidal_rewrite_callback(self, unused_addr, args):
-        event = args.loads(args)
+        event = json.loads(args)
 
         if 'u' in event['type']:
             self.owner.recv_local_cursor(event)
