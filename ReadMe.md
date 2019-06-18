@@ -54,6 +54,10 @@ Command+Enter for block executions
 
 GLSL auto executes.
 
+## Saving and Playing Back Text Recordings
+
+
+
 ## Miscellaneous
 
 The src_files folder includes files needed to create the syntaxes used by this plug-in. Use YAML Macros https://packagecontrol.io/packages/YAMLMacros to change and then build these files. Results found in syntaxes folder. 

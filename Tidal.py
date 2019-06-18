@@ -4,13 +4,14 @@ import sublime
 class Tidal(object):
     def __init__(self, owner):
         self.owner = owner
+
         sublime.active_window().run_command(
             "terminus_open", {
                 "cmd": [
-                    "zsh",
+                    self.owner.settings.get("shell"),
                     "-i",
                     "-l",
-                    "/Users/lawsos2/.ghcup/bin/ghci",
+                    self.owner.settings.get("ghci"),
                     "-XOverloadedStrings",
                     "-ghci-script",
                     "$packages/Jensaarai/BootTidal.hs"

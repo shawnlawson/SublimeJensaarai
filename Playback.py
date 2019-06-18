@@ -119,20 +119,21 @@ class Playback(object):
 
     def status_update(self):
         self.owner.view.erase_status('playback')
-        self.elapsed_time = time.time() - self.play_start
-        percent_done = self.elapsed_time / self.total_time
-        status = '['
-        status += ' ' * math.floor(percent_done * 50)
-        status += '|'
-        status += ' ' * math.floor((1.0 - percent_done) * 50)
-        status += ']\t'
-        status += (str(math.floor(self.elapsed_time / 60)) + ":" +
-                   str(math.floor(self.elapsed_time % 60)) + "\t")
-        status += (str(math.floor(self.total_time / 60)) + ":" +
-                   str(math.floor(self.total_time % 60)) + "\t")
-        self.owner.view.set_status('playback', status)
-        self.status_timer = threading.Timer(0.25, self.status_update)
-        self.status_timer.start()
+        if self.elapsed_time < self.total_time:
+            self.elapsed_time = time.time() - self.play_start
+            percent_done = self.elapsed_time / self.total_time
+            status = '['
+            status += '-' * math.floor(percent_done * 50)
+            status += '|'
+            status += '-' * math.floor((1.0 - percent_done) * 50)
+            status += ']\t'
+            status += (str(math.floor(self.elapsed_time / 60)) + ":" +
+                       str(math.floor(self.elapsed_time % 60)) + "\t")
+            status += (str(math.floor(self.total_time / 60)) + ":" +
+                       str(math.floor(self.total_time % 60)) + "\t")
+            self.owner.view.set_status('playback', status)
+            self.status_timer = threading.Timer(0.25, self.status_update)
+            self.status_timer.start()
 
     def destroy(self):
         self.owner.view.erase_status('playback')

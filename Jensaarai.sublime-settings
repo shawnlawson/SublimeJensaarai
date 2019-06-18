@@ -22,11 +22,12 @@
 
     /*
         Run local Tidal in Terminus
+        Uses shell and ghci variables below, then runs:
+        $shell -i -l $ghci -XOverloadedstring -ghci-script $packages/Jensaarai/BootTidal.hs
     */
     "terminus_tidal": false,
     "shell": "zsh",
-    "stack": "",
-    "ghci_location": "/Users/lawsos2/.ghcup/bin/ghci",
+    "ghci": "/Users/lawsos2/.ghcup/bin/ghci",
 
     /*
         Websocket connection webviewer in
