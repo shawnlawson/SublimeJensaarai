@@ -1,6 +1,6 @@
 # Sublime Jensaarai
 
-This plugin is for livecoding python, glsl, and Tidal Cycles.
+This plug-in is for livecoding python, glsl, and Tidal Cycles.
 
 ## Dependencies
 Install Package Control https://packagecontrol.io/installation first, then use it to install the following
@@ -53,6 +53,10 @@ Shift+Enter for single line executions
 Command+Enter for block executions
 
 GLSL auto executes.
+
+## Miscellaneous
+
+The src_files folder includes files needed to create the syntaxes used by this plug-in. Use YAML Macros https://packagecontrol.io/packages/YAMLMacros to change and then build these files. Results found in syntaxes folder. 
 
 
 

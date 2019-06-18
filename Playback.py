@@ -16,7 +16,7 @@ class Playback(object):
         self.total_events = 0
         self.total_time = 0.0
         self.play_start = 0.0
-        self.prev_time = 0.0
+        self.elapsed_time = 0.0
         self.timer = None
         self.status_timer = None
         self.open()
@@ -52,8 +52,6 @@ class Playback(object):
             self.handle_event()
 
     def handle_event(self):
-        print(self.which_event, self.total_events)
-
         # behind on events
         while self.which_event < self.total_events:
             event_time = self.data['action'][self.which_event]['time']
@@ -62,10 +60,11 @@ class Playback(object):
             else:
                 break
 
-        # out of events
+        # out of events, split to not trigger new more events
         if self.which_event >= self.total_events:
-            self.stop()
-            return
+            # and out of time
+            if self.elapsed_time >= self.total_time:
+                self.stop()
         else:
             event_time = self.data['action'][self.which_event]['time']
             when = self.play_start - time.time() + event_time
@@ -73,7 +72,7 @@ class Playback(object):
             self.timer.start()
 
     def play(self):
-        self.play_start = time.time()
+        self.play_start = time.time() - self.elapsed_time
         self.status_timer = threading.Timer(1.0, self.status_update)
         self.status_timer.start()
         self.handle_event()
@@ -81,12 +80,15 @@ class Playback(object):
     def stop(self):
         if self.timer is not None and self.timer.isAlive():
             self.timer.cancel()
+        if self.status_timer is not None and self.status_timer.isAlive():
+            self.status_timer.cancel()
+        self.elapsed_time = time.time() - self.play_start
 
     def rewind(self):
         self.stop()
         self.which_event = 0
         self.play_start = 0.0
-        self.prev_time = 0.0
+        self.elapsed_time = 0.0
         self.owner.view.window().run_command(
             "replace_jensaarai_main",
             {"text": self.data["initial_text"], "region": None})
@@ -112,27 +114,26 @@ class Playback(object):
             print("Time not valid, either too big or too small")
             return
 
-        # set time_jump to something
+        self.elapsed_time = time_jump
+        self.play_start = time.time() - self.elapsed_time
 
     def status_update(self):
         self.owner.view.erase_status('playback')
-        play_head = time.time() - self.play_start
-        percent_done = play_head / self.total_time
+        self.elapsed_time = time.time() - self.play_start
+        percent_done = self.elapsed_time / self.total_time
         status = '['
         status += ' ' * math.floor(percent_done * 50)
         status += '|'
         status += ' ' * math.floor((1.0 - percent_done) * 50)
         status += ']\t'
-        status += (str(math.floor(play_head / 60)) + ":" +
-                   str(math.floor(play_head % 60)) + "\t")
+        status += (str(math.floor(self.elapsed_time / 60)) + ":" +
+                   str(math.floor(self.elapsed_time % 60)) + "\t")
         status += (str(math.floor(self.total_time / 60)) + ":" +
                    str(math.floor(self.total_time % 60)) + "\t")
         self.owner.view.set_status('playback', status)
-        self.status_timer = threading.Timer(1.0, self.status_update)
+        self.status_timer = threading.Timer(0.25, self.status_update)
         self.status_timer.start()
 
     def destroy(self):
         self.owner.view.erase_status('playback')
         self.stop()
-        if self.status_timer is not None and self.status_timer.isAlive():
-            self.status_timer.cancel()
