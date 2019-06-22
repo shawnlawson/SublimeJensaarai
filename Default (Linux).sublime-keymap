@@ -1,0 +1,4 @@
+[
+	{ "keys": ["shift+enter"], "command": "execute_jensaarai", "args": {"scope": "lines"}},
+	{ "keys": ["ctrl+enter"],  "command": "execute_jensaarai", "args": {"scope": "block"}}
+]
