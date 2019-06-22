@@ -24,6 +24,7 @@ class Jensaarai(threading.Thread):
         self.ws_server = None
         self.osc_server = None
         self.osc_client = None
+        self.extra_osc_client = None
         self.tidal = None
         self.recording = None
         self.playback = None
@@ -33,6 +34,8 @@ class Jensaarai(threading.Thread):
             self.start_osc_client()
         if self.settings.get("osc_server_enable"):
             self.start_osc_server()
+        if self.settings.get("extra_OSC_client"):
+            self.start_osc_client()
         if self.settings.get("websocket"):
             self.start_ws()
         if self.settings.get("terminus_tidal"):
@@ -291,7 +294,11 @@ class Jensaarai(threading.Thread):
 
     def start_osc_client(self):
         if self.osc_client is None:
-            self.osc_client = OSC.OSCClient(self)
+            self.osc_client = OSC.OSCClient(
+                self,
+                ip=self.settings.get("osc_touch_designer_ip"),
+                outPort=self.settings.get("osc_touch_designer_port")
+            )
             self.osc_client.start()
             self.glslTimer.start()
 
@@ -299,6 +306,20 @@ class Jensaarai(threading.Thread):
         if self.osc_client is not None:
             self.osc_client.close()
             self.osc_client = None
+
+    def start_extra_osc_client(self):
+        if self.extra_osc_client is None:
+            self.extra_osc_client = OSC.OSCClient(
+                self,
+                ip=self.settings.get("extra_OSC_client_ip"),
+                outPort=self.settings.get("extra_OSC_client_port"))
+            self.extra_osc_client.start()
+            self.glslTimer.start()
+
+    def stop_extra_osc_client(self):
+        if self.extra_osc_client is not None:
+            self.extra_osc_client.close()
+            self.extra_osc_client = None
 
     def start_tidal(self):
         if self.tidal is None:
@@ -335,6 +356,7 @@ class Jensaarai(threading.Thread):
         self.stop_recording()
         self.destroy_playback()
         self.stop_osc_client()
+        self.stop_extra_osc_client()
         self.stop_osc_server()
         self.stop_ws()
         self.stop_tidal()

@@ -5,10 +5,10 @@ from pythonosc import osc_message_builder, udp_client
 
 
 class OSCServer(threading.Thread):
-    def __init__(self, owner, ip="127.0.0.1", outPort=8888):
+    def __init__(self, owner, ip="127.0.0.1", inPort=8888):
         super(OSCServer, self).__init__()
         self.owner = owner
-        self.port = outPort
+        self.port = inPort
         self.ip = ip
         self.server = None
         self.console = self.owner.view.window().new_file()
@@ -68,11 +68,11 @@ class OSCServer(threading.Thread):
 
 
 class OSCClient(threading.Thread):
-    def __init__(self, owner, ip="127.0.0.1", inPort=7777):
+    def __init__(self, owner, ip="127.0.0.1", outPort=7777):
         super(OSCClient, self).__init__()
         self.owner = owner
         self.ip = ip
-        self.port = inPort
+        self.port = outPort
         self.client = None
 
     def run(self):

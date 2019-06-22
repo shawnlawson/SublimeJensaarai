@@ -38,6 +38,13 @@
     "websocket_port": 5678,
 
     /*
+        Extra OSC outgoing client
+    */
+    "extra_OSC_client": false,
+    "extra_OSC_client_ip": "127.0.0.1",
+    "extra_OSC_client_port": 7778,
+
+    /*
         Toggle for local recording
     */
     "enable_recording": true

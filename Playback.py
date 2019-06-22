@@ -114,8 +114,12 @@ class Playback(object):
             print("Time not valid, either too big or too small")
             return
 
+        if time_jump < self.elapsed_time:
+            self.rewind()
+        else:
+            self.stop()
         self.elapsed_time = time_jump
-        self.play_start = time.time() - self.elapsed_time
+        self.play()
 
     def status_update(self):
         self.owner.view.erase_status('playback')
