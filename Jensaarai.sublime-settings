@@ -47,5 +47,5 @@
     /*
         Toggle for local recording
     */
-    "enable_recording": true
+    "enable_recording": false
 }

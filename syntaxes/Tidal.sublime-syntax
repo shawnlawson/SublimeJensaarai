@@ -351,28 +351,19 @@ contexts:
         - include: comments
 
   literals:
-    - match: |-
-        (?x)
-        \b
-        (           {{decimal}}     ( ( \. {{decimal}} )?     ( {{exponent}}     )? )?
-        | 0 ( [xX]_?{{hexadecimal}} ( ( \. {{hexadecimal}} )? ( {{binexponent}}  )? )?
-            | [oO]_?{{octal}}
-            | [bB]_?{{binary}}
-            )
-        )
-        \b
-      scope: constant.numeric.haskell
     - match: '"'
       push:
         - meta_scope: string.quoted.double.haskell
-        - match: '"'
-          pop: true
+        - match: '[^ ]\S+[:]\d+'
+          scope: myscope
         - match: '\\(NUL|SOH|STX|ETX|EOT|ENQ|ACK|BEL|BS|HT|LF|VT|FF|CR|SO|SI|DLE|DC1|DC2|DC3|DC4|NAK|SYN|ETB|CAN|EM|SUB|ESC|FS|GS|RS|US|SP|DEL|[abfnrtv\\\"''\&])'
           scope: constant.character.escape.haskell
         - match: '\\o{{octal}}|\\x{{hexadecimal}}|\\{{decimal}}'
           scope: constant.character.escape.octal.haskell
         - match: '\^[A-Z@\[\]\\\^_]'
           scope: constant.character.escape.control.haskell
+        - match: '"'
+          pop: true
     - match: |-
         (?x)
         (')
@@ -392,7 +383,17 @@ contexts:
         3: constant.character.escape.octal.haskell
         4: constant.character.escape.hexadecimal.haskell
         5: constant.character.escape.control.haskell
-
+    - match: |-
+        (?x)
+        \b
+        (           {{decimal}}     ( ( \. {{decimal}} )?     ( {{exponent}}     )? )?
+        | 0 ( [xX]_?{{hexadecimal}} ( ( \. {{hexadecimal}} )? ( {{binexponent}}  )? )?
+            | [oO]_?{{octal}}
+            | [bB]_?{{binary}}
+            )
+        )
+        \b
+      scope: constant.numeric.haskell
   module_exports:
     - match: \(
       scope: storage.module.haskell
