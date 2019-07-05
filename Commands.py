@@ -1,5 +1,6 @@
 import sublime
 import sublime_plugin
+import subprocess
 from . import Jensaarai
 
 jensaarai = None
@@ -260,5 +261,15 @@ class EditListener(sublime_plugin.EventListener):
                 return([], 0)
             loc = locations[0] - len(prefix)
             if view.score_selector(loc, 'myscope') > 0:
-                print(prefix)
+                p = subprocess.Popen(
+                    ['python3', 'what.py'],
+                    cwd='$packages/SublimeJensaarai/',
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    shell=True)
+                out, err = p.communicate()
+                if (err):
+                    print(err)
+                print(out)
+
 
