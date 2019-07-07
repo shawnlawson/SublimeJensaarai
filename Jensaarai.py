@@ -9,6 +9,7 @@ from . import Playback
 from . import OSC
 from . import WS
 from . import Tidal
+from .SearchScripts import FindSimilarSamples_Class
 
 
 class Jensaarai(threading.Thread):
@@ -28,6 +29,7 @@ class Jensaarai(threading.Thread):
         self.tidal = None
         self.recording = None
         self.playback = None
+        self.FSS = FindSimilarSamples_Class.FindSimilarSamples()
         if self.settings.get("enable_recording"):
             self.start_recording()
         if self.settings.get("osc_touch_designer_enable"):

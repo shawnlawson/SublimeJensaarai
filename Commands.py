@@ -256,20 +256,14 @@ class EditListener(sublime_plugin.EventListener):
         if jensaarai is not None:
             # more than one cursor is a no go
             if len(locations) > 1:
-                return ([], 0)
+                return None
             if jensaarai.view != view:
-                return([], 0)
+                return None
             loc = locations[0] - len(prefix)
             if view.score_selector(loc, 'myscope') > 0:
-                p = subprocess.Popen(
-                    ['python3', 'what.py'],
-                    cwd='$packages/SublimeJensaarai/',
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
-                    shell=True)
-                out, err = p.communicate()
-                if (err):
-                    print(err)
-                print(out)
-
-
+                vals = jensaarai.FSS.getSimilarSamples(prefix)
+                options = []
+                for v in vals:
+                    options.append((prefix + '\t' + v, v))
+                print(options)
+                return (options, 0)
