@@ -262,7 +262,7 @@ class EditListener(sublime_plugin.EventListener):
             loc = locations[0] - len(prefix)
             if view.score_selector(loc, 'myscope') > 0:
                 vals = jensaarai.FSS.getSimilarSamples(prefix)
-                options = []
+                options = [(prefix, prefix)]
                 for v in vals:
                     options.append((prefix + '\t' + v, v))
                 print(options)
