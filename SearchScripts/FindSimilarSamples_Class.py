@@ -42,12 +42,7 @@ class FindSimilarSamples():
             else:
                 self.counts[x] = 1
 
-    def getSimilarSamples(self, sampleName, likeness=3):
-        if likeness > 3:
-            likeness = 3
-        if likeness < 0:
-            likeness = 0
-
+    def getSimilarSamples(self, sampleName):
         self.counts = {}
         self.likeness = [[], [], [], []]
 
@@ -74,8 +69,13 @@ class FindSimilarSamples():
 
             for k, v in self.counts.items():
                 self.likeness[v - 1].append(self.FilenamesToTidal[self.combines_dat['NAMES'][k]])
+
+            topPicks=self.likeness[3]+self.likeness[2]+self.likeness[1]+self.likeness[0]
+            i=topPicks.index(sampleName)
+            topPicks.pop(i)
+            topPicks=topPicks[:20]
         except IndexError as e:
             pass
         except KeyError as e:
             pass
-        return self.likeness[likeness]
+        return topPicks
