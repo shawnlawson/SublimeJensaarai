@@ -1,8 +1,0 @@
-
-{
-    "description": "Jensaarai live-coding tools",
-    "url": "https://github.com/shawnlawson",
-    "platforms": ["*"],
-    "version": "0.1",
-    "sublime_text": ">=3200"
-}

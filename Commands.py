@@ -1,7 +1,6 @@
 import sublime
 import sublime_plugin
-import subprocess
-from . import Jensaarai
+from .jensaarai import Jensaarai
 
 jensaarai = None
 

@@ -23,7 +23,7 @@
     /*
         Run local Tidal in Terminus
         Uses shell and ghci variables below, then runs:
-        $shell -i -l $ghci -XOverloadedstring -ghci-script $packages/SublimeJensaarai/BootTidal.hs
+        $shell -i -l $ghci -XOverloadedstring -ghci-script $packages/Jensaarai/BootTidal.hs
     */
     "terminus_tidal": false,
     "shell": "zsh",

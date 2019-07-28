@@ -10,21 +10,14 @@
                 "id": "package-settings",
                 "children": [
                     {
-                        "caption": "Sublime Jensaarai",
+                        "caption": "Jensaarai",
                         "children": [
                             {
-                                "command": "open_file",
+                                "caption": "Settings",
+                                "command": "edit_settings",
                                 "args": {
-                                    "file": "${packages}/SublimeJensaarai/Jensaarai.sublime-settings"
-                                },
-                                "caption": "Settings – Default"
-                            },
-                            {
-                                "command": "open_file",
-                                "args": {
-                                    "file": "${packages}/User/Jensaarai.sublime-settings"
-                                },
-                                "caption": "Settings – User"
+                                    "base_file": "${packages}/Jensaarai/Jensaarai.sublime-settings"
+                                }
                             }
                         ]
                     }
