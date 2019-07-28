@@ -1,7 +1,8 @@
 # Specify filepatterns you want git to ignore.
 
-**/.DS_Store/
+.DS_Store
 *.sublime-project
 *.sublime-workspace
 **/.pyc
 src_files/
+SearchScripts/

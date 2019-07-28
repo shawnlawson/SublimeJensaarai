@@ -1,0 +1,3 @@
+Jensaarai 0.0.1 Changelog:
+
+Initial Package Control Release
