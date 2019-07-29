@@ -16,7 +16,7 @@
                                 "caption": "Settings",
                                 "command": "edit_settings",
                                 "args": {
-                                    "base_file": "${packages}/Jensaarai/Jensaarai.sublime-settings"
+                                    "base_file": "${packages}/SublimeJensaarai/Jensaarai.sublime-settings"
                                 }
                             }
                         ]

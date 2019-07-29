@@ -14,7 +14,7 @@ class Tidal(object):
                     self.owner.settings.get("ghci"),
                     "-XOverloadedStrings",
                     "-ghci-script",
-                    "$packages/Jensaarai/BootTidal.hs"
+                    "$packages/SublimeJensaarai/BootTidal.hs"
                 ],
                 "cwd": "$file",
                 "title": "jensaarai tidal",
