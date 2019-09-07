@@ -16,6 +16,8 @@ class StopJensaaraiCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         global jensaarai
         if jensaarai is not None:
+            if jensaarai.recording is not None:
+                jensaarai.recording.save()
             jensaarai.close()
 
 
@@ -250,19 +252,3 @@ class EditListener(sublime_plugin.EventListener):
                 jensaarai.close()
                 jensaarai = None
 
-    def on_query_completions(self, view, prefix, locations):
-        global jensaarai
-        if jensaarai is not None:
-            # more than one cursor is a no go
-            if len(locations) > 1:
-                return None
-            if jensaarai.view != view:
-                return None
-            loc = locations[0] - len(prefix)
-            if view.score_selector(loc, 'myscope') > 0:
-                vals = jensaarai.FSS.getSimilarSamples(prefix)
-                options = [(prefix, prefix)]
-                for v in vals:
-                    options.append((prefix + '\t' + v, v))
-                print(options)
-                return (options, 0)

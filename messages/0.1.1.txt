@@ -1,0 +1,5 @@
+Jensaarai 0.1.1 Changelog:
+
+Made dependencies local
+
+Fix to ask for save when stopping recording.
