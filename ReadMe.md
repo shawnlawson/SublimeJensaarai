@@ -11,7 +11,7 @@ Terminus for terminals in Sublime: https://packagecontrol.io/packages/Terminus
 
 
 ## Installation
-1. Clone this directory to:
+1. Clone or unzip this directory to:
 
 OSX
 ~/Library/Application Support/Sublime Text 3/Packages/
@@ -20,6 +20,7 @@ Win
 %APPDATA%\Sublime Text 3\Packages
 
 Linux
+/opt/sublime_text/Packages
 
 2. Follow the directions in the CopyThese directory.
 
