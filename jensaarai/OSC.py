@@ -64,7 +64,7 @@ class OSCServer(threading.Thread):
             {"scope": "block"})
 
     def tidal_rewrite_all_callback(self, unused_addr, args):
-        self.view.window().run_command(
+        self.owner.view.window().run_command(
             "replace_jensaarai_main",
             {"text": '//tidal\n\n' + args, "region": None})
         self.view.sel().clear()
