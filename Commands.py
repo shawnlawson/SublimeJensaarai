@@ -251,4 +251,3 @@ class EditListener(sublime_plugin.EventListener):
             if jensaarai.view == view:
                 jensaarai.close()
                 jensaarai = None
-
