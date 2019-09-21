@@ -1,3 +1,4 @@
+import sublime
 import threading
 import json
 from .deps.pythonosc import dispatcher, osc_server
@@ -11,32 +12,35 @@ class OSCServer(threading.Thread):
         self.port = inPort
         self.ip = ip
         self.server = None
-        self.console = self.owner.view.window().new_file()
-        self.console.window().run_command(
-            "carry_file_to_pane", {"direction": "down"})
+        # self.console = self.owner.view.window().new_file()
+        # self.console.window().run_command(
+            # "carry_file_to_pane", {"direction": "down"})
         self.dispatcher = dispatcher.Dispatcher()
         self.dispatcher.map("/python_feedback", self.python_callback)
         self.dispatcher.map("/glsl_feedback", self.glsl_callback)
         self.dispatcher.map("/tidal_rewrite", self.tidal_rewrite_callback)
+        self.dispatcher.map("/tidal_rewrite_all",
+                            self.tidal_rewrite_all_callback)
+        self.dispatcher.map("/tidal_exec", self.tidal_exec_callback)
 
     def run(self):
         self.server = osc_server.ThreadingOSCUDPServer(
             (self.ip, self.port),
             self.dispatcher
         )
-        self.owner.view.window().run_command(
-            "travel_to_pane", {"direction": "up"})
-        self.owner.view.window().focus_view(self.owner.view)
+        # self.owner.view.window().run_command(
+            # "travel_to_pane", {"direction": "up"})
+        # self.owner.view.window().focus_view(self.owner.view)
         print("Started OSCServer {}".format(self.server.server_address))
         self.server.serve_forever()
 
     def close(self):
-        if self.console is not None:
-            self.console.window().focus_view(self.console)
-            self.console.window().run_command('close_file')
-            self.owner.view.window().focus_view(self.owner.view)
-            self.owner.view.window().run_command(
-                "destroy_pane", {"direction": "down"})
+        # if self.console is not None:
+        #     self.console.window().focus_view(self.console)
+        #     self.console.window().run_command('close_file')
+        #     self.owner.view.window().focus_view(self.owner.view)
+        #     self.owner.view.window().run_command(
+        #         "destroy_pane", {"direction": "down"})
         if self.server is not None:
             self.server.shutdown()
             self.server = None
@@ -53,6 +57,18 @@ class OSCServer(threading.Thread):
             "insert_jensaarai_console",
             {"text": '\n' + args}
         )
+
+    def tidal_exec_callback(self, unused_addr, args):
+        self.owner.view.window().run_command(
+            "execute_jensaarai",
+            {"scope": "block"})
+
+    def tidal_rewrite_all_callback(self, unused_addr, args):
+        self.view.window().run_command(
+            "replace_jensaarai_main",
+            {"text": '//tidal\n\n' + args, "region": None})
+        self.view.sel().clear()
+        self.view.sel().add(sublime.Region(9, 9))
 
     def tidal_rewrite_callback(self, unused_addr, args):
         event = json.loads(args)
