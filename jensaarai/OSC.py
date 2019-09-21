@@ -67,8 +67,8 @@ class OSCServer(threading.Thread):
         self.owner.view.window().run_command(
             "replace_jensaarai_main",
             {"text": '//tidal\n\n' + args, "region": None})
-        self.view.sel().clear()
-        self.view.sel().add(sublime.Region(9, 9))
+        self.owner.view.sel().clear()
+        self.owner.view.sel().add(sublime.Region(9, 9))
 
     def tidal_rewrite_callback(self, unused_addr, args):
         event = json.loads(args)
