@@ -59,6 +59,14 @@ class Jensaarai(threading.Thread):
 
         diffs = difflib.SequenceMatcher(None, self.shadow, new_buffer)
         for tag, i1, i2, j1, j2 in diffs.get_opcodes():
+            # print(tag, i1, i2, j1, j2)
+            if tag is "replace":
+                self.manage_messages(
+                    'c',
+                    sublime.Region(i1, i2),
+                    action='replace',
+                    text=new_buffer[j1:j2])
+
             if tag is "delete":
                 self.manage_messages(
                     'c',

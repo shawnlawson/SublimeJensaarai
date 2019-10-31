@@ -34,7 +34,8 @@ from __future__ import absolute_import, division, print_function, with_statement
 import sys
 import time
 import copy
-import tornado
+# import tornado
+from . import version as tornado_version
 
 from . import escape
 from . import httputil
@@ -268,7 +269,7 @@ class WSGIContainer(object):
             if "content-type" not in header_set:
                 headers.append(("Content-Type", "text/html; charset=UTF-8"))
         if "server" not in header_set:
-            headers.append(("Server", "TornadoServer/%s" % tornado.version))
+            headers.append(("Server", "TornadoServer/%s" % tornado_version))
 
         parts = [escape.utf8("HTTP/1.1 " + data["status"] + "\r\n")]
         for key, value in headers:

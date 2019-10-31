@@ -70,6 +70,7 @@ import sys
 import threading
 import time
 # import tornado
+from . import version as tornado_version
 import traceback
 import types
 
@@ -272,7 +273,7 @@ class RequestHandler(object):
     def clear(self):
         """Resets all headers and content for this response."""
         self._headers = httputil.HTTPHeaders({
-            "Server": "TornadoServer/%s" % tornado.version,
+            "Server": "TornadoServer/%s" % tornado_version,
             "Content-Type": "text/html; charset=UTF-8",
             "Date": httputil.format_timestamp(time.time()),
         })
@@ -1352,7 +1353,7 @@ class RequestHandler(object):
                 else:
                     # Delayed import of IOLoop because it's not available
                     # on app engine
-                    from tornado.ioloop import IOLoop
+                    from .ioloop import IOLoop
                     IOLoop.current().add_future(
                         result, functools.partial(self._when_complete,
                                                   callback=callback))
@@ -1682,7 +1683,7 @@ class Application(object):
         """
         # import is here rather than top level because HTTPServer
         # is not importable on appengine
-        from tornado.httpserver import HTTPServer
+        from .httpserver import HTTPServer
         server = HTTPServer(self, **kwargs)
         server.listen(port, address)
 

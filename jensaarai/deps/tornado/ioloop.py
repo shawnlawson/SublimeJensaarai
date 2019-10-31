@@ -204,13 +204,13 @@ class IOLoop(Configurable):
     @classmethod
     def configurable_default(cls):
         if hasattr(select, "epoll"):
-            from tornado.platform.epoll import EPollIOLoop
+            from .platform.epoll import EPollIOLoop
             return EPollIOLoop
         if hasattr(select, "kqueue"):
             # Python 2.6+ on BSD or Mac
-            from tornado.platform.kqueue import KQueueIOLoop
+            from .platform.kqueue import KQueueIOLoop
             return KQueueIOLoop
-        from tornado.platform.select import SelectIOLoop
+        from .platform.select import SelectIOLoop
         return SelectIOLoop
 
     def initialize(self):

@@ -29,6 +29,7 @@ import struct
 import time
 from . import escape
 from . import web
+from . import version as tornado_version
 
 from .concurrent import TracebackFuture
 from .escape import utf8, native_str
@@ -375,7 +376,7 @@ class WebSocketProtocol76(WebSocketProtocol):
             "Sec-WebSocket-Location: %(scheme)s://%(host)s%(uri)s\r\n"
             "%(subprotocol)s"
             "\r\n" % (dict(
-                version=tornado.version,
+                version=tornado_version,
                 origin=self.request.headers["Origin"],
                 scheme=scheme,
                 host=self.request.host,

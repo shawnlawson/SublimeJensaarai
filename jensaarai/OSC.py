@@ -12,9 +12,9 @@ class OSCServer(threading.Thread):
         self.port = inPort
         self.ip = ip
         self.server = None
-        # self.console = self.owner.view.window().new_file()
-        # self.console.window().run_command(
-            # "carry_file_to_pane", {"direction": "down"})
+        self.console = self.owner.view.window().new_file()
+        self.console.window().run_command(
+            "carry_file_to_pane", {"direction": "down"})
         self.dispatcher = dispatcher.Dispatcher()
         self.dispatcher.map("/python_feedback", self.python_callback)
         self.dispatcher.map("/glsl_feedback", self.glsl_callback)
@@ -28,19 +28,19 @@ class OSCServer(threading.Thread):
             (self.ip, self.port),
             self.dispatcher
         )
-        # self.owner.view.window().run_command(
-            # "travel_to_pane", {"direction": "up"})
-        # self.owner.view.window().focus_view(self.owner.view)
+        self.owner.view.window().run_command(
+            "travel_to_pane", {"direction": "up"})
+        self.owner.view.window().focus_view(self.owner.view)
         print("Started OSCServer {}".format(self.server.server_address))
         self.server.serve_forever()
 
     def close(self):
-        # if self.console is not None:
-        #     self.console.window().focus_view(self.console)
-        #     self.console.window().run_command('close_file')
-        #     self.owner.view.window().focus_view(self.owner.view)
-        #     self.owner.view.window().run_command(
-        #         "destroy_pane", {"direction": "down"})
+        if self.console is not None:
+            self.console.window().focus_view(self.console)
+            self.console.window().run_command('close_file')
+            self.owner.view.window().focus_view(self.owner.view)
+            self.owner.view.window().run_command(
+                "destroy_pane", {"direction": "down"})
         if self.server is not None:
             self.server.shutdown()
             self.server = None
